@@ -1,8 +1,14 @@
 ---
+title: "GOADv3 Installation"
 toc: true
 toc_label: "Table of Contents"
 toc_icon: "folder-open"
 toc_sticky: true
+category: GOAD
+tags: GOAD AD Guide
+excerpt: "This is a guide on how I installed GOADv3 in VMware using WSL in Windows 11"
+header:
+  teaser: "/assets/images/GOADv3-Installation-Images/logo_GOAD3.png"
 ---
 
 {: .notice--info}
