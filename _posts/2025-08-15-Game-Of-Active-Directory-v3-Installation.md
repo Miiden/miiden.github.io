@@ -1,3 +1,9 @@
+---
+toc: true
+toc_label: "Table of Contents"
+toc_icon: "folder-open"
+toc_sticky: true
+---
 
 {: .notice--info}
 >**Requirements:**
@@ -257,7 +263,7 @@ check
 
 Hopefully you will see that everything is green, this means its all ready and prepared. however, we want to run this as Root, However running as `sudo` will give the following results when using `check`:
 
-{% include figure popup=true image_path="/assets/images/GOADv3-Installation-Images/broken-check.png" alt="check-command"%}{: .align-center}
+{% include figure popup=true image_path="/assets/images/GOADv3-Installation-Images/broken-check.png" alt="broken-check"%}{: .align-center}
 
 This is because the root user's `$PATH` is different, to solve this issue, were going to copy the `$PATH` from the standard user, and use that for this current session.
 
@@ -270,7 +276,8 @@ Exit out of the `GOAD.sh` script and `echo` the `$PATH` of the standard user
 echo $PATH
 ```
 
->[!error] Very Important!
+{: .notice--danger}
+>**Very Important!**  
 >The commands `echo $PATH` and `$PATH` are two different things; It took me far too long to realize this so I'm letting you know now.
 
 You'll get a lovely long `$PATH` but just check that the following entries are there:
@@ -300,13 +307,14 @@ Open up the Script again and run the `check` command to see if everything is now
 check
 ```
 
-![[Pasted image 20250815123513.png]]
+{% include figure popup=true image_path="/assets/images/GOADv3-Installation-Images/check-command.png" alt="check-command"%}{: .align-center}
 
 # 3 - Installing the Base VM's to Work With
 
->[!important] Failure
+{: .notice--warning}
+>**Failure**  
 >This is going to fail; at least from my experience.
->The reason we are running it now, is to begin the construction of our lab and installing the operating system on each device, setting up the `vagrantfile` and setting the initial network settings.
+>The reason we are running it now, is to begin the construction of our lab and install the operating system on each device, setting up the `vagrantfile` and setting the initial network settings.
 
 
 Setting up the lab's configuration is pretty simple through the `GOAD.sh` script.
@@ -318,15 +326,16 @@ To see the current settings that will be applied use the `config` command.
 config
 ```
 
-Were looking at the top section for the current configurations:
-![[Pasted image 20250815134622.png]]
+Were looking at the top section for the current configurations:  
+{% include figure popup=true image_path="/assets/images/GOADv3-Installation-Images/goad-config.png" alt="goad-config"%}{: .align-center}
 
-Set the lab you want to install, for this guide we are going with the full installation `GOAD`, the other options are `GOAD/GOAD-Light/NHA/SCCM`
+Set the lab you want to install, for this guide we are going with the full installation `GOAD`, the other options are:  
+`GOAD/GOAD-Light/NHA/SCCM`
 
 ```bash
 GOAD/vmware/local/192.168.56.X > set_lab <lab>
 GOAD/vmware/local/192.168.56.X > set_lab GOAD
-```
+```  
 
 Setting the IP range, by default the IP range is `192.168.56.0/24` you can specify the first 3 octets if you want to change it, or if you're installing a second lab and want a different range.
 
@@ -334,34 +343,37 @@ Setting the IP range, by default the IP range is `192.168.56.0/24` you can speci
 GOAD/vmware/local/192.168.56.X > set_ip_range <ip_range>
 GOAD/vmware/local/192.168.56.X > set_ip_range 10.0.1
 GOAD/vmware/local/10.0.1.X >
-```
+```  
 
-Time to install, so type:
+Time to install, type:
 
 ```
 install
 ```
 
-So after some time; at least in my experience it fails, this isn't great but its a start and now the lab should be at least all up and running.
+After some time; at least in my experience it fails, this isn't great but its a start and now the lab should be at least all up and running.
 
-![[Pasted image 20250815135528.png]]
+{% include figure popup=true image_path="/assets/images/GOADv3-Installation-Images/first-install-fail.png" alt="first-install-fail"%}{: .align-center}
 
-You will most likely get errors like above and as previously mentioned in [[GOAD Installation#ansible persistent "unreachable error"|This Section]]. If you have followed along with this guide, you have enabled set the `inventory` file to use HTTP for WinRM connections, and you will still be getting errors like above. 
+You will most likely get errors like above and as previously mentioned in [this section](#ansible-persistent-unreachable-error).  
+
+If you have followed along with this guide, you have enabled set the `inventory` file to use HTTP for WinRM connections, and you will still be getting errors like above. 
 In short, i have tried with HTTPS and HTTP and they both didn't work, so i left it as HTTP and carried on with the remaining steps to get it to work. I'm not sure if i could have ran it with the default HTTPS but I'm just going through what got it to work for me and to hopefully also work for you.
 
 TL;DR: We will get it to work just keep going.
+
 ## Getting it to Work
 
 Open up VMware Workstation on your windows host, and open the library (side panel), then right click in the panel and make a new folder for all of your GOAD VM's to be organized in.
 
->[!note]
+{: .notice--info}
 >The VM's will not be listed here yet, we will add them in a second.
 
-![[Pasted image 20250815140304.png]]
+{% include figure popup=true image_path="/assets/images/GOADv3-Installation-Images/vmware-folder.png" alt="vmware-folder"%}{: .align-center}
 
 Next, you'll want to add the VM's into that folder, right click an open space in the panel again and select `Scan for Virtual Machines`
 
-![[Pasted image 20250815140550.png]]
+{% include figure popup=true image_path="/assets/images/GOADv3-Installation-Images/vmware-scan.png" alt="vmware-scan"%}{: .align-center}
 
 Select your `C:\GOAD` folder and scan for VM's, the list should populate and you can drag the VM's into the GOAD folder.
 
@@ -373,7 +385,7 @@ So where are we?
 
 At this stage we should have Windows configured, A bunch of boxes imported into VMware, and WSL running the GOAD script as Root in an Administrator Terminal with lots of networking errors.
 
-![[Pasted image 20250815135528.png]]
+{% include figure popup=true image_path="/assets/images/GOADv3-Installation-Images/first-install-fail.png" alt="first-install-fail"%}{: .align-center}
 
 First things first, we want to make another change to the configuration files, this couldn't be done previously as the config file we are looking for did not exist until we created the initial VM's
 
@@ -411,30 +423,34 @@ Like this:
 
 ## The Networking Section
 
->[!important] The Standard IP's of each box
->```
->GOAD-DC01 - 192.168.56.10
->GOAD-DC02 - 192.168.56.11
->GOAD-DC03 - 192.168.56.12
+{: .notice--info}
+>**The Default IP's of each box:**  
 >
->GOAD-SRV02 - 192.168.56.22
->GOAD-SRV03 - 192.168.56.23
->```
+>| Hostname   | Expected IP   |
+>| ---------- | ------------- |
+>| GOAD-DC01  | 192.168.56.10 |
+>| GOAD-DC02  | 192.168.56.11 |
+>| GOAD-DC03  | 192.168.56.12 |
+>| GOAD-SRV02 | 192.168.56.22 |
+>| GOAD-SRV03 | 192.168.56.23 |
+>{: .display}
 
-Ok, so Host Adaptors in VMware, good fun.
+Ok, so Host Adaptors in VMware; good fun.
 
 Firstly, you need to be aware that due to the failure of the installation, most of the configuration has not been set up. the machines are basically barebones at the moment potentially with the correct networking, potentially not.
 
 So we need to first of all, check the networking, this is going to involve checking the VMware Adaptor settings, checking the VM's assigned networking hardware configuration then logging on to each machine, checking the IP's (possibly altering them), checking the Host Adaptor settings (possibly altering it), and then disabling the firewall on each VM.
 
-### 1. Check the VMware Adaptor Settings.
+### Checking the VMware Adaptor Settings
 
 In VMware, Press Edit in the top options bar, and select `Virtual Network Editor...`
 
-![[Pasted image 20250815142952.png]]
+{% include figure popup=true image_path="/assets/images/GOADv3-Installation-Images/vmware-vna.png" alt="vmware-vna"%}{: .align-center}
 
-From here we are looking for the Adaptor with the IP address range that we set earlier in the GOAD script.
-![[Pasted image 20250815143342.png]]
+From here we are looking for the Adaptor with the IP address range that we set earlier in the GOAD script.  
+
+{% include figure popup=true image_path="/assets/images/GOADv3-Installation-Images/vmware-vmnet2.png" alt="vmware-vmnet2"%}{: .align-center}  
+
 Other Adaptors may be present, some are default, some will be part of GOAD such as `VMnet8` in this instance.
 We are only interested in the adaptor with the IP range that we specified, as mentioned before the default is `192.168.56.0/24` in my case `VMnet2`
 
@@ -442,18 +458,18 @@ Now go to your control panel and go to the network and sharing center, we need t
 
 Find the Adaptor with the same name as the one we found in VMware in my case `VMnet2`
 
-![[Pasted image 20250815143741.png]]
+{% include figure popup=true image_path="/assets/images/GOADv3-Installation-Images/network-adaptor.png" alt="network-adaptor"%}{: .align-center} 
 
 Right click and select, Properties
 
 From here were going to save some pain, and set a static IP address for our host, on that network.
 I chose an IP address out of the default IP's `192.168.56.100`
 
-![[Pasted image 20250815144021.png]]
+{% include figure popup=true image_path="/assets/images/GOADv3-Installation-Images/setting-static-ip.png" alt="setting-static-ip"%}{: .align-center} 
 
 Accept those changes and we can move on to checking each VM
 
-### 2. Fixing each VM
+### Fixing each VM
 
 Starting with the first machine `GOAD-DC01` as mentioned above the default IP address for this machine is `192.168.56.10`, we need to first check the hardware assigned adaptors, as expected we have 2 for each machine.
 
@@ -462,7 +478,7 @@ Right Click the Device and go to `settings`,  from there, select `Network Adapto
 From the options on the right hand side, make sure that `VMnet2` is selected.
 You will probably have to come back in here and check each machine again at some point, because for me it changed back to `VMnet0` for some reason.
 
-![[Pasted image 20250815144726.png]]
+{% include figure popup=true image_path="/assets/images/GOADv3-Installation-Images/vmware-host-only-vmnet2.png" alt="vmware-host-only-vmnet2"%}{: .align-center} 
 
 Now do this for every machine...
 
@@ -472,12 +488,13 @@ From making the above changed you most likely have every VM open in the VMware W
 
 Starting again with `GOAD-DC01` were going to send the `CTRL+ALT+Delete` signal and log into the Vagrant account, credentials `vagrant:vagrant`
 
-From there, we need to open up a PowerShell / CMD window, whichever you prefer and do and `ipconfig`
-![[Pasted image 20250815145433.png]]
+From there, we need to open up a PowerShell / CMD window, whichever you prefer and do and `ipconfig`  
+
+{% include figure popup=true image_path="/assets/images/GOADv3-Installation-Images/ipconfig.png" alt="ipconfig"%}{: .align-center} 
 
 Looking at Ethernet adapter Ethernet1 we can see that the expected IP address of `192.168.56.10` is present.
 
-If it is not correct, you'll need to go into the adaptor settings on this VM, as we did above with the Host, and just set a static IP address, matching the following table:
+If it is not correct, you'll need to go into the adaptor settings on this VM, as we did above with the Host, and just set a static IP address, matching the following table:  
 
 | Hostname   | Expected IP   |
 | ---------- | ------------- |
@@ -486,25 +503,27 @@ If it is not correct, you'll need to go into the adaptor settings on this VM, as
 | GOAD-DC03  | 192.168.56.12 |
 | GOAD-SRV02 | 192.168.56.22 |
 | GOAD-SRV03 | 192.168.56.23 |
+{: .display}  
+
 Next is to disable the firewall, the easiest way to do this is to open the start menu, and type `firewall`
-![[Pasted image 20250815145838.png]]
+{% include figure popup=true image_path="/assets/images/GOADv3-Installation-Images/firewall-status.png" alt="firewall-status"%}{: .align-center} 
 
 Select `Check Firewall Status`
 
-Select `Turn Windows Defender Firewall on or off`
-![[Pasted image 20250815145943.png]]
+Select `Turn Windows Defender Firewall on or off`  
+{% include figure popup=true image_path="/assets/images/GOADv3-Installation-Images/firewall-off.png" alt="firewall-off"%}{: .align-center} 
 
 And select `Turn off Windows Defender Firewall (not recommended)`, on both the `Private network settings` and the `Public network settings`
 
-![[Pasted image 20250815150021.png]]
+{% include figure popup=true image_path="/assets/images/GOADv3-Installation-Images/firewall-networks.png" alt="firewall-networks"%}{: .align-center} 
 
 ## Install Again
 
 With all of that out of the way, its worth testing a ping to each device from your host, you should now get a response:
 
-![[Pasted image 20250815150509.png]]
+{% include figure popup=true image_path="/assets/images/GOADv3-Installation-Images/goad-ping.png" alt="goad-ping"%}{: .align-center} 
 
->[!warning]
+{: .notice--warning}
 >Give each machine a restart, to make sure that the settings have stuck, and once each machine is back up, try pinging again.
 
 
@@ -519,28 +538,28 @@ install
 ```
 
 This time you should see a lot better results:
-![[Pasted image 20250815151118.png]]
+{% include figure popup=true image_path="/assets/images/GOADv3-Installation-Images/goad-install-ok.png" alt="goad-install-ok"%}{: .align-center} 
 
 However, after some time, you may get the same error message as me:
-![[Pasted image 20250815151143.png]]
+{% include figure popup=true image_path="/assets/images/GOADv3-Installation-Images/goad-domain-error.png" alt="goad-domain-error"%}{: .align-center} 
 
-This one was a fairly hard fix, after the installation script failed 3 times, and the installation was canceled. 
-I restarted `GOAD-DC02` and the machine that did not want to connect to the domain `north.sevenkingdoms.local` in this case `GOAD-SRV02`
+This one was a simple fix, after the installation script failed 3 times, and the installation was canceled. 
+I restarted `GOAD-DC02` (because its the DC for `north.sevenkingdoms.local`) and the machine that did not want to connect to the domain `north.sevenkingdoms.local` in this case `GOAD-SRV02`
 
 Once the machines were restarted, and give 2-3 minutes to fully boot up, I ran the installation again.
 
 ```bash
 install
-```
+```  
 
 # Finally
 
 And after and hour and a half i was greeted with the following message in my terminal
 
-![[Pasted image 20250815151412.png]]
+{% include figure popup=true image_path="/assets/images/GOADv3-Installation-Images/goad-install-done.png" alt="goad-install-done"%}{: .align-center} 
 
 ```
 [*] Lab successfully provisioned in 01:39:04
 ```
 
-After all of that, it's now time to start using the lab.
+After all of that, it's now time to start using the lab!
