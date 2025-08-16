@@ -1,8 +1,9 @@
 
 {: .notice--info}
->Requirements
->We are going to install the main `GOAD` lab, so be sure to have at least:
->`24GB RAM`
+>**Requirements:**
+>
+>We are going to install the main `GOAD` lab, so be sure to have at least:  
+>`24GB RAM`  
 >`120GB Disk Space`
 
 [GOAD Official Documentation](https://orange-cyberdefense.github.io/GOAD/installation/)
@@ -15,15 +16,17 @@ Some sections of this guide will be taken directly from the above listed officia
 
 ## VMware Workstation
 
->[!Important] 
+{: .notice--info}
+>**Important:**  
 >VMware Workstation Pro Is now free for public use. Though the broadcom pages are rubbish and require an account to use.
 
-Install VMware workstation : https://support.broadcom.com/group/ecx/productdownloads?subfamily=VMware+Workstation+Pro
+Install VMware Workstation : [Vmware Workstation Pro Download](https://support.broadcom.com/group/ecx/productdownloads?subfamily=VMware+Workstation+Pro)
 
->[!error] VMware Installation Bug
+{: .notice--danger}
+>**VMware Installation Bug:**  
 >if you got an error about groups and permission during vmware workstation install consider running this in an administrator cmd prompt: 
 >
->```
+>```powershell
 >net localgroup /add "Users"
 >net localgroup /add "Authenticated Users"
 >```
@@ -33,18 +36,19 @@ Install VMware workstation : https://support.broadcom.com/group/ecx/productdownl
 
 If you want to create the lab on your windows computer you will need vagrant. Vagrant will be responsible to automate the process of VM download and creation.
 
-Download and install visual c++ 2019 : https://aka.ms/vs/17/release/vc_redist.x64.exe
+Download and install visual c++ 2019 : [vc_redist.x64.exe](https://aka.ms/vs/17/release/vc_redist.x64.exe)  
 Install vagrant : [Vagrant Main Download Page](https://developer.hashicorp.com/vagrant/install)
 
->[!Important] Vagrant Binaries Page
+{: .notice--info}
+>**Vagrant Binaries Page:**  
 >This Link is important as the main WSL install of Vagrant is a different version from the Main Windows Version, This page will become useful later on when installing Vagrant on WSL to match versions.
 >[Vagrant Binaries Pages](https://releases.hashicorp.com/vagrant/)
 
-Install vagrant VMware utility : https://developer.hashicorp.com/vagrant/install/vmware
+Install vagrant VMware utility : [Vagrant VMware Utility](https://developer.hashicorp.com/vagrant/install/vmware)
 
-Once vagrant is installed on windows, run the following in a command prompt to install the relevant dependencies
+Once vagrant is installed on windows, run the following in a command prompt to install the relevant dependencies:
 
-```
+```powershell
 vagrant.exe plugin install vagrant-reload vagrant-vmware-desktop winrm winrm-fs winrm-elevated
 ```
 
@@ -63,10 +67,12 @@ For this installation I will be using Debian
 wsl --install debian
 ```
 
->[!warning] WSL Setup
+{: .notice--warning}
+>**WSL Setup:**  
 >Run through the prompts such as setting a root password and restart your host when required, it just makes it easier.
 
->[!important] Install WSL 1
+{: .notice--info}
+>**Install WSL 1**  
 >New Linux installations, installed using the wsl --install command, will be set to WSL 2 by default. The wsl --set-version command can be used to downgrade from WSL 2 to WSL 1 or to update previously installed Linux distributions from WSL 1 to WSL 2. To see whether your Linux distribution is set to WSL 1 or WSL 2, use the command: `wsl -l -v`. To change versions, use the command: `wsl --set-version <distro name> <wsl_version>` replacing with the name of the Linux distribution that you want to update. As an example: `wsl --set-version Debian 1` will set your Debian distribution to use WSL 1.
 
 ### Prepare WSL distribution
@@ -83,7 +89,7 @@ Verify you are using python version >= 3.8:
 python3 --version
 ```
 
-![[Pasted image 20250815112256.png]]
+{% include figure popup=true image_path="/assets/images/GOADv3-Installation-Images/python-version.png" alt="python-version"%}{: .align-center}
 
 Install python packages:
 
@@ -100,12 +106,12 @@ Download the version of Vagrant that you have installed on windows, in my case 2
 
 Copy the `.deb` file to a suitable place on your drive, to make things easier I added it to the `vagrant` directory in `c:\GOAD`
 
-Install
+**Install:**
 ```bash
 dpkg -i vagrant_2.4.8-1_amd64.deb
 ```
 
-Check the vagrant versions across the windows host and the WSL session to ensure they now match; you can use the same command for both PowerShell and WSL
+Check the vagrant versions across the windows host and the WSL session to ensure they now match; you should be able to use the same command for both PowerShell and WSL.
 
 ```bash
 vagrant --version
@@ -115,10 +121,10 @@ vagrant --version
 
 Make a directory off of one of your main drives, I am making a directory in `C:\` called `GOAD`: `C:\GOAD`
 
->[!important]
+{: .notice--info}
 >This path HAS to be on one of your drives (C:/D:/E:/...)
 
-You will be using `git` to download all of the files used to create the lab, if you have it installed on windows i.e. `git desktop` or `git` then clone using Terminal/PowerShell as Admin
+We will be using `git` to download all of the files used to create the lab, if you have it installed on windows i.e. `git desktop` or `git` then clone using Terminal/PowerShell as Admin
 
 If not, you can also do it from within WSL, but you may need to install `git`
 
@@ -134,12 +140,13 @@ cd c:\GOAD
 cd /mnt/c/whatever_folder_you_want
 git clone https://github.com/Orange-Cyberdefense/GOAD.git
 cd GOAD
-```
+```  
 
 
 # 2 - Preparing the VM's
 
->[!error] Hell
+{: .notice--danger}
+>**Hell**  
 >This is the section where all hell breaks loose and the [Official Documentation](https://orange-cyberdefense.github.io/GOAD/providers/vmware/) does not cover any of it in detail.
 
 First thing is to check that you have the designated Prerequisites installed and ready to go.
@@ -165,17 +172,17 @@ First thing is to check that you have the designated Prerequisites installed and
 
 ## Configuration Files
 
-First of all, we are going to address  some issues faced from the get to, to hopefully prevent them later.
+First of all, we are going to address some of the issues I faced from the get go, to hopefully prevent them later.
 
-Taken from the [Troubleshooting Page](https://orange-cyberdefense.github.io/GOAD/troobleshoot/), this error has caused me no end of issues, and there are several steps I have taken to try and address this.
+Taken from the [Troubleshooting Page](https://orange-cyberdefense.github.io/GOAD/troobleshoot/), the below error has caused me no end of issues, and there are several steps I have taken to try and address this.
 
 ## ansible persistent "unreachable error"
 
 - Unreachable means ansible can't contact the VM's.
-- Maybe the VM's didn't get the right IP? (try to connect with `vagrant:vagrant` on VM and check the IP)
-- Or you got a firewall on the VM which do provisioning which block WinRM connection ?
-- or maybe it is a vagrant issue : https://github.com/Orange-Cyberdefense/GOAD/issues/12
-- You could try to switch on port 5985 to connect without SSL as suggest here : https://github.com/Orange-Cyberdefense/GOAD/issues/98 by uncommenting the lines in the inventory file you use:
+  - Maybe the VM's didn't get the right IP? (try to connect with `vagrant:vagrant` on the VM and check it's IP)
+  - Or you have a firewall on the VM which does the provisioning which could be blocking the WinRM connection?
+  - Or maybe it is a vagrant issue: https://github.com/Orange-Cyberdefense/GOAD/issues/12
+  - You could try to switch on port 5985 to connect without SSL as suggest here : https://github.com/Orange-Cyberdefense/GOAD/issues/98 by uncommenting the lines in the inventory file you use:
 
 ```
 # ansible_winrm_transport=basic
@@ -199,7 +206,8 @@ ansible_winrm_transport=basic
 ansible_port=5985
 ```
 
->[!tip] Speed up Failure
+{: .notice--info}
+> **Speed up Failure**  
 > During troubleshooting it was a painful experiance to have to wait upwards oft 30 minutes for the installation to fail each time, if you are comfortable changing the timeouts its worth changing the values to:
 > ```
 > ansible_winrm_operation_timeout_sec=50
@@ -207,7 +215,7 @@ ansible_port=5985
 > ```
 > The Operation Timeout has to be lower than the Read Timeout.
 
->[!warning]
+{: .notice--warning}
 >Further changes to our `Vagrantfile` will need to be made, however that cannot be done yet as it is not generated for our specific lab environment yet
 
 ## WSL Session Configuration
@@ -217,7 +225,7 @@ ansible_port=5985
 Scary stuff, but to make things easier, its time to run the installation as Admin/Root! A few things need to be addressed before we can do this properly.
 
 First things first, Run Terminal/PowerShell as admin
-![[Pasted image 20250815122901.png]]
+{% include figure popup=true image_path="/assets/images/GOADv3-Installation-Images/terminal-admin.png" alt="terminal-admin"%}{: .align-center}
 
 And navigate to our GOAD folder:
 
@@ -245,17 +253,15 @@ When the script is running, we want to use the `check` command:
 check
 ```
 
-![[Pasted image 20250815123513.png]]
+{% include figure popup=true image_path="/assets/images/GOADv3-Installation-Images/check-command.png" alt="check-command"%}{: .align-center}
 
-Hopefully you will see that everything is green, this means its all ready and prepared. however, we want to run this as Root, 
+Hopefully you will see that everything is green, this means its all ready and prepared. however, we want to run this as Root, However running as `sudo` will give the following results when using `check`:
 
-However running as `sudo` will give the following results when using `check`
-
-![[Pasted image 20250815123638.png]]
+{% include figure popup=true image_path="/assets/images/GOADv3-Installation-Images/broken-check.png" alt="check-command"%}{: .align-center}
 
 This is because the root user's `$PATH` is different, to solve this issue, were going to copy the `$PATH` from the standard user, and use that for this current session.
 
->[!warning]
+{: .notice--warning}
 >This is a change only for this current terminal session, if the session is closed at any point the `$PATH` will need to be imported again.
 
 Exit out of the `GOAD.sh` script and `echo` the `$PATH` of the standard user
