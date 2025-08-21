@@ -110,7 +110,7 @@ check
 
 So we are now all caught up with the previous installation and we now want to install an exchange server, lovely.
 
-From the `goad.sh` script, we can view all currently installed labs by using `ls`
+From the `goad.sh` script, we can view all currently installed labs by using `ls`:
 
 {% include figure popup=true image_path="/assets/images/Exchange-Installation-Images/goad-ls.png" alt="goad-ls"%}{: .align-center}
 
