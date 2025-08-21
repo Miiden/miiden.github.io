@@ -1,5 +1,5 @@
 ---
-title: "GOADv3 Installation"
+title: "GoADv3 Installation"
 toc: true
 toc_label: "Table of Contents"
 toc_icon: "folder-open"
